@@ -1,0 +1,78 @@
+/* TIFFall v1.1 ImageJ macro, January 23, 2017
+ *  
+ * This small macro saves all opened images to TIF in the same directory they were opened from
+ * You can choose between saving merged channels, split channels or both.
+ * 
+ * This macro is written by Laurent Paardekooper
+ * PhD student in the group of Geert van den Bogaart
+ * Tumor Immunology Lab, RIMLS, Nijmegen
+*/
+
+macro "JPEGall [j]" {
+
+setBatchmode = (true);
+dir = getDirectory("image");
+JPEG = dir + "\\JPEG\\";
+File.makeDirectory(JPEG); 
+
+//This dialog asks for merged or split channels (or both)
+  Dialog.create("Channels?");
+  Dialog.addCheckbox("Merged", true);
+  Dialog.addCheckbox("Split", true);
+  Dialog.show();
+  Merged = Dialog.getCheckbox();
+  Split = Dialog.getCheckbox();;
+
+  //Start by compiling a list of all open images at this point
+  names = newArray(nImages);
+  ids = newArray(nImages);
+  for (i=0; i < ids.length; i++){
+  	selectImage(i+1);
+  	ids[i] = getImageID();
+  	names[i] = getTitle();
+  }
+
+  
+  if (Split==true) {
+
+	for (i=0; i < names.length; i++) { 
+    	selectImage(names[i]);
+    	run("Duplicate...", "duplicate");
+    	rename("A");
+    	cnum=nSlices();
+    	Stack.setDisplayMode("grayscale");
+		run("Split Channels");
+    	for (j=0; j < cnum; j++) {
+    		selectImage("C" + j+1 + "-A");
+    		filename = "C" + j+1 + "-" + names[i];
+    		saveAs("Jpeg", JPEG + filename);
+    		close();
+    		close("C" + j+1 + "-A");
+    		}
+
+		}
+  	}
+
+  	
+  if (Merged==true) {
+
+	for (i=0; i < names.length; i++) { 
+    	selectImage(names[i]);
+    	Stack.setDisplayMode("composite");
+    	Stack.setActiveChannels("1110");
+    	filename=names[i];
+		saveAs("Jpeg", JPEG + filename);
+		close();
+			}
+  }
+/*
+  macro "Close All Windows" { 
+      while (nImages>0) { 
+          selectImage(nImages); 
+          close(); 
+      } 
+*/
+setBatchmode = (false);
+
+showMessage("All images saved!");
+}
