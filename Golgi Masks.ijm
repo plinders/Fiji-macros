@@ -16,7 +16,7 @@ seriesname = getInfo("image.filename");
 //Save ROIs to zip so they can be reused later
 //roiManager("Save", dir+"\\"+seriesname+"_ROIs.zip");
 
-setSlice(3);
+setSlice(1);
 run("Duplicate...", " ");
 nucleus_name = seriesname + "_nucleus";
 rename(nucleus_name);

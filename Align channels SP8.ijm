@@ -13,8 +13,8 @@ var boxH = round(0.5 * height);
 
 
 run("Fire");
-//makeRectangle(initX, initY, boxW, boxH);
+makeRectangle(initX, initY, boxW, boxH);
 
-//var alignInput = "method=5 windowsizex="+boxW+" windowsizey="+boxH+" x0="+initX+" y0="+initY+" swindow=0 subpixel=false itpmethod=0 ref.slice=1 show=true";
+var alignInput = "method=5 windowsizex="+boxW+" windowsizey="+boxH+" x0="+initX+" y0="+initY+" swindow=0 subpixel=false itpmethod=0 ref.slice=1 show=true";
 
-//run("Align slices in stack...", alignInput);
+run("Align slices in stack...", alignInput);
