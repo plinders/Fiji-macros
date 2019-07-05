@@ -17,20 +17,30 @@ function splitimg(img){
 			xpos = RESOLUTION * x;
 			ypos = RESOLUTION * y;
 			makeRectangle(xpos, ypos, RESOLUTION, RESOLUTION);
-			newname = "phase_"+x+""+y;
+			newname = ""+x+""+y;
 			Roi.setName(newname);
 			roiManager("Add");
 		}
 	}
 
 	File.makeDirectory(outdir);
+	rawdir = outdir + File.separator + "raw";
+	cytodir = outdir + File.separator + "cyto";
+	nucleardir = outdir + File.separator + "nuclear";
+	maskdir = outdir + File.separator + "Masks";
+	File.makeDirectory(rawdir);
+	File.makeDirectory(cytodir);
+	File.makeDirectory(nucleardir);
+	File.makeDirectory(maskdir);
+
+	run("8-bit");
 
 	for (i = 0; i < roiManager("count"); i++) {
 		roiManager("Select", i);
 		rName = Roi.getName();
 		run("Duplicate...", "title="+rName);
-		saveAs("Tiff", outdir+File.separator+rName+".tif");
-		selectWindow(rName+".tif");
+		saveAs("Tiff", rawdir+File.separator+"phase_"+rName+".tif");
+		selectWindow("phase_"+rName+".tif");
 		close();
 		selectWindow(windowname);
 		// print(Roi.getName());
@@ -38,6 +48,32 @@ function splitimg(img){
 
 	selectWindow(filename);
 	close();
+
+	czidir = "D:\\180518_PL025.2";
+
+	czifile = czidir + File.separator + foldername + ".czi";
+
+	run("Bio-Formats Importer", "open="+czifile+" autoscale color_mode=Default rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT");
+	setSlice(4);
+	run("Duplicate...", "title=nuclear");
+	selectWindow(foldername + ".czi");
+	close();
+	selectWindow("nuclear");
+	run("8-bit");
+	run("8-bit");
+
+	for (i = 0; i < roiManager("count"); i++) {
+		roiManager("Select", i);
+		rName = Roi.getName();
+		run("Duplicate...", "title="+rName);
+		saveAs("Tiff", rawdir+File.separator+"DAPI_"+rName+".tif");
+		selectWindow("DAPI_"+rName+".tif");
+		close();
+		selectWindow("nuclear");
+		// print(Roi.getName());
+	}
+
+
 }
 
 
