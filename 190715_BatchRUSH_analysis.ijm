@@ -14,7 +14,6 @@ function analyzeCargo(img) {
     giantinChan = getNumber("Giantin channel", 3);
     cargoChan = getNumber("Cargo channel", 1);
 
-    setBatchMode(true);
     open(img);
     roiManager("reset");
 
